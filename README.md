@@ -1,5 +1,8 @@
 <div align="center">
 
+# fork 项目
+- 原作者原项目代码不玩啥，用 ai 进行了补全
+    - https://github.com/wanqin2003/resume-copilot
 # Resume Copilot
 
 **你的私人 AI 求职助理：粘贴 JD，一键生成定制简历、面试预测题与 LaTeX 导出**
