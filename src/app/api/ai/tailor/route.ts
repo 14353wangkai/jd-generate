@@ -36,7 +36,10 @@ const TAILOR_SYSTEM_PROMPT = `你是一个顶级的互联网大厂资深 HR 与�
 function getModel() {
   const provider = process.env.AI_PROVIDER ?? "openai";
   const baseURL = process.env.OPENAI_BASE_URL;
+  // 检测需要使用兼容模式的模型
   const isQwen = baseURL?.includes("dashscope") || baseURL?.includes("aliyun");
+  const isDeepSeek = baseURL?.includes("deepseek");
+  const needsCompatibleMode = isQwen || isDeepSeek;
 
   if (provider === "anthropic") {
     const anthropic = createAnthropic({
@@ -116,10 +119,13 @@ export async function POST(req: NextRequest) {
     const { masterProfile, targetJd } = parsed.data;
     const model = getModel();
     const baseURL = process.env.OPENAI_BASE_URL;
+    // 检测需要使用兼容模式的模型（Qwen、DeepSeek 等）
     const isQwen = baseURL?.includes("dashscope") || baseURL?.includes("aliyun");
+    const isDeepSeek = baseURL?.includes("deepseek");
+    const needsCompatibleMode = isQwen || isDeepSeek;
 
-    // Qwen 使用 generateText + 手动 JSON 解析，其他模型使用 generateObject
-    if (isQwen) {
+    // 兼容模式：使用 generateText + 手动 JSON 解析（适用于 Qwen、DeepSeek 等）
+    if (needsCompatibleMode) {
       const { text } = await generateText({
         model,
         system: TAILOR_SYSTEM_PROMPT + "\n\n请以严格的 JSON 格式返回结果，不要包含任何其他说明文字。",
